@@ -58,35 +58,35 @@ public class Coord {
     // ACCESSOR METHODS \\
 
     /**
-     * @returns the coordinate name of the <code>Coord</code>.
+     * @return the coordinate name of the <code>Coord</code>.
      */
     public String getCoord() {
         return COORD;
     }
 
     /**
-     * @returns the x coordinate of the <code>Coord</code>.
+     * @return the x coordinate of the <code>Coord</code>.
      */
     public int x() {
         return X_;
     }
 
     /**
-     * @returns the y coordinate of the <code>Coord</code>.
+     * @return the y coordinate of the <code>Coord</code>.
      */
     public int y() {
         return Y_;
     }
 
     /**
-     * @returns the graphical x coordinate of the <code>Coord</code>.
+     * @return the graphical x coordinate of the <code>Coord</code>.
      */
     public int gx() {
         return GX;
     }
 
     /**
-     * @returns the graphical y coordinate of the <code>Coord</code>.
+     * @return the graphical y coordinate of the <code>Coord</code>.
      */
     public int gy() {
         return GY;

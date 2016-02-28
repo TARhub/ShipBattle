@@ -113,7 +113,7 @@ public class Board extends Canvas implements MouseListener {
 
 	/**
 	 * @param   c a String that refers to a coord in the String + int format.
-	 * @returns a <code>Coord</code> from the board from a string.
+	 * @return a <code>Coord</code> from the board from a string.
 	 */
     public Coord thisCoord(String c) {
 		Coord co = new Coord(0,0);
@@ -129,7 +129,7 @@ public class Board extends Canvas implements MouseListener {
 
 	/**
 	 * @param   c another <code>Coord</code>
-	 * @returns a <code>Coord</code> from the board from a another coord.
+	 * @return a <code>Coord</code> from the board from a another coord.
 	 */
 	public Coord thisCoord(Coord c) {
 		return coords[c.x()][c.y()];
