@@ -19,7 +19,6 @@ import javax.imageio.ImageIO;
  * The ship board doesn't have any player interaction in it, but it is a
  * very useful panel for the player to see the status of his ships.
  *
- * @author Thomas A. Rodriguez
  * @version %I%
  * @since 1.0
  */
@@ -187,8 +186,8 @@ public class Board extends Canvas implements MouseListener {
             break;
         }
 
-        g.drawImage(shipDisplay, s.firstCoord().gx()+640,
-                    s.firstCoord().gy(), this);
+        g.drawImage(shipDisplay, s.locations(0).gx()+640,
+                    s.locations(0).gy(), this);
     }
 
 	public void hit(Coord c) {
