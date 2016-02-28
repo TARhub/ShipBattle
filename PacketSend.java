@@ -4,8 +4,7 @@ import java.net.*;
 /**
  * Sends and recieves packets to/from the server.
  *
- * @author Thomas A. Rodriguez
- * @version %I%, %G%
+ * @version %I%
  * @since 1.2
  */
 public class PacketSend {
@@ -16,6 +15,8 @@ public class PacketSend {
     private final String LOCAL_HOST = "localhost";
     private final int    PORT;
     private final int    player = -1;
+
+    private Socket client;
 
     /**
      * Constructs a <code>PacketSend</code> object using the player #,
@@ -31,6 +32,28 @@ public class PacketSend {
             case PLAYER_ONE: player = 1; break;
             case PLAYER_TWO: player = 2; break;
         }
+
+        try {
+            client = new Socket(LOCAL_HOST,PORT);
+        } catch (IOException e) {
+            System.err.println("Well, this happened: "+e);
+        }
     }
 
+    public void send(String s) throws IOException {
+        OutputStream outToServer = client.getOutputStream();
+        DataOutputStream out     = new DataOutputStream(outToServer);
+
+        out.writeUTF(s);
+    }
+
+    public String recieve() throws IOException {
+        InputStream inFromServer = client.getInputStream();
+        DataInputStream in       = new DataInputStream(inFromServer);
+
+        String s = in.readUTF();
+        client.close();
+
+        return s;
+    }
 }
