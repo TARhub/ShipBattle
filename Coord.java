@@ -1,7 +1,6 @@
 /**
  * Generates coordinates for use within the <code>Board</code>.
  *
- * @author Thomas A. Rodriguez
  * @version %I%
  * @since 1.0
  */
@@ -64,36 +63,42 @@ public class Coord {
     public String getCoord() {
         return COORD;
     }
+
     /**
      * @returns the x coordinate of the <code>Coord</code>.
      */
     public int x() {
         return X_;
     }
+
     /**
      * @returns the y coordinate of the <code>Coord</code>.
      */
     public int y() {
         return Y_;
     }
+
     /**
      * @returns the graphical x coordinate of the <code>Coord</code>.
      */
     public int gx() {
         return GX;
     }
+
     /**
      * @returns the graphical y coordinate of the <code>Coord</code>.
      */
     public int gy() {
         return GY;
     }
+
     /**
      * @return if the <code>Coord</code> has been it or not.
      */
     public boolean isHit() {
         return hit;
     }
+
     /**
      * @return if the <code>Coord</code> contains a <code>Ship</code> or not.
      */
@@ -101,6 +106,9 @@ public class Coord {
         return hasShip;
     }
 
+    /**
+     * @return if the <code>Coord</code> has had an attempted hit before.
+     */
     public boolean attHit() {
         return attHit;
     }
@@ -108,23 +116,31 @@ public class Coord {
     // MODIFIER METHODS \\
 
     /**
-     * Sets the coord as hit
+     * Sets the coord as hit.
      */
     public void setHit() {
         hit = true;
     }
 
+    /**
+     * Sets the coord as missed.
+     */
     public void setMiss() {
         hit = false;
         attHit = true;
     }
 
+    /**
+     * Sets the coord as containing a <code>Ship</code>.
+     */
     public void setShip() {
         hasShip = true;
     }
 
+    /**
+     * Sets the coord as not containing a <code>Ship</code>.
+     */
     public void refreshShip() {
         hasShip = false;
     }
-
 }

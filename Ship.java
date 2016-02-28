@@ -4,6 +4,16 @@ import java.io.IOException;
 import java.util.Random;
 import javax.imageio.ImageIO;
 
+/**
+ * This is a ship that can be placed on the Board. Ships are the defining factor of the game,
+ * as the player's actions' success depends on where the ships are located.
+ * <p>
+ * Ships are pretty intelligent. They know their location, if they are hit, what kind of
+ * ship they are, what orientation they are facing, and if they have sunk or not.
+ *
+ * @version %I%
+ * @since   1.0
+ */
 public class Ship {
     private static final int AC = 5;
     private static final int B_ = 4;
@@ -24,6 +34,14 @@ public class Ship {
 
     private boolean isSunk;
 
+    /**
+     * Default constructor that constructs a <code>Ship</code> object,
+     * using a ship type and a player board to determine if the placement
+     * of the ship is legal or not.
+     *
+     * @param t the type of ship that is constructed (1-5).
+     * @param b the player board used to determine legal placement.
+     */
     public Ship(int t,Board b) {
         Random rnd = new Random();
         oo = rnd.nextInt(2);
@@ -104,26 +122,66 @@ public class Ship {
 
     }
 
+    /**
+     * @returns the first coord of the ship's locations.
+     * @deprecated use the {@link #locations(int i)} instead.
+     */
+    @Deprecated
     public Coord firstCoord() {
         return locations[0];
     }
 
-    public Coord locations(int i) {
-        return locations[i];
+    /**
+     * @param n coordinate n of the ship.
+     * @returns the nth coordinate of the ship.
+     */
+    public Coord locations(int n) {
+        return locations[n];
     }
 
+    /**
+     * @returns the orientation of the ship.
+     */
     public Orientation orientation() {
     	return o;
     }
 
+    /**
+     * @returns the type of ship the ship is.
+     */
     public ShipType shipType() {
     	return type;
     }
 
+    /**
+     * @returns the length of the ship.
+     */
     public int shipLength() {
         return shipLength;
     }
 
+    /**
+     * @returns if the ship has sunk.
+     */
+    public boolean isSunk() {
+        for (int i=0;i<isHit.length;i++) {
+            if (isHit[i] == true )
+                isSunk = true;
+            else if (isHit[i] == false)
+                isSunk = false;
+        }
+
+        return isSunk;
+    }
+    /**
+     * Gives the ship an image to use when being painted.
+     * This method is implemented in {@link Board#placeShip(Ship s,Graphics g)}.
+     *
+     * @param type the type of ship the ship is.
+     * @param o    the orientation of the ship.
+     * @returns an image of the ship.
+     * @see Board#placeShip(Ship s,Graphics g)
+     */
     public Image shipDisplay(ShipType type, Orientation o) throws IOException {
         Image shipDisplay = null;
 
@@ -165,16 +223,6 @@ public class Ship {
         return shipDisplay;
     }
 
-    public boolean isSunk() {
-        for (int i=0;i<isHit.length;i++) {
-            if (isHit[i] == true )
-                isSunk = true;
-            else if (isHit[i] == false)
-                isSunk = false;
-        }
-
-        return isSunk;
-    }
     /*
     AIRCRAFT CARRIERS: 96 possible locations.
     BATTLESHIPS: 116 possible locations.
