@@ -33,6 +33,18 @@ public class Board extends Canvas implements MouseListener {
 	private ArrayList<Ship> ships = new ArrayList<Ship>();
 	private boolean placingShips = true;
 
+	/**
+	 * Default constructor for the Board class.
+	 *
+	 * It first instantiates the 2d array <code>Coord</code>s,which are the basis of most
+	 * of the game, as it gives vital information about the game, like if there is a ship
+	 * on the coordinate, if it has been hit, has been attempted to be hit, and most
+	 * importantly, it's location.
+	 * <p>
+	 * It will then instantiate the images of the game, the radar, the sea, the hit symbol,
+	 * and the miss symbol. Lastly, it will then instantiate the {@link #buildBattlefield()}
+	 * method, which will randomly place ships on the board.
+	 */
     public Board() {
         coords = new Coord[10][10];
         boardnames = new String[10][10];
@@ -62,6 +74,10 @@ public class Board extends Canvas implements MouseListener {
 		buildBattlefield();
     }
 
+	/**
+	 * {@inheritDoc}
+	 * @see #placeShip(Ship s,Graphics g)
+	 */
     public void paint(Graphics g) {
         super.paint(g);
         g.drawImage(radar,0,0,this);
@@ -95,6 +111,10 @@ public class Board extends Canvas implements MouseListener {
 			}
 	}
 
+	/**
+	 * @param   c a String that refers to a coord in the String + int format.
+	 * @returns a <code>Coord</code> from the board from a string.
+	 */
     public Coord thisCoord(String c) {
 		Coord co = new Coord(0,0);
         int a=0,b=0;
@@ -107,21 +127,34 @@ public class Board extends Canvas implements MouseListener {
 		return co;
     }
 
+	/**
+	 * @param   c another <code>Coord</code>
+	 * @returns a <code>Coord</code> from the board from a another coord.
+	 */
 	public Coord thisCoord(Coord c) {
 		return coords[c.x()][c.y()];
 	}
 
+	/**
+	 * Sets a coordinate on the board to another coord.
+	 * @param that another Coord.
+	 */
 	public void thatCoord(Coord that) {
 		coords[that.x()][that.y()] = that;
 	}
 
-
+	/**
+	 * Wipes all data from the <code>Coord</code> array.
+	 */
 	public void refreshStatus() {
 		for (int i=0;i<10;i++)
 			for (int j=0;j<10;j++)
 				coords[i][j].refreshShip();
 	}
 
+	/**
+	 * Randomly places ships on the Board.
+	 */
 	public void buildBattlefield() {
 		boolean legal = false;
 		Ship s;
@@ -142,6 +175,11 @@ public class Board extends Canvas implements MouseListener {
 
     }
 
+	/**
+	 * Graphically places the ships on the board.
+	 * @param s The ship that will be placed.
+	 * @param g Graphics inherited from the {@link #paint(Graphics g)} method.
+	 */
     public void placeShip(Ship s,Graphics g) throws IOException {
         BufferedImage shipDisplay = null;
 
@@ -190,6 +228,10 @@ public class Board extends Canvas implements MouseListener {
                     s.locations(0).gy(), this);
     }
 
+	/**
+	 * Determines if the move by the player is a hit or a miss.
+	 * @param c The coord that the player is attempting to hit.
+	 */
 	public void hit(Coord c) {
 		if (thisCoord(c).hasShip() == true) {
 			thisCoord(c).setHit();
