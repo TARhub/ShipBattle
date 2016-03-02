@@ -9,19 +9,35 @@ import javax.swing.JFrame;
  * @since 0.0
  */
 public class Battleship { // AKA "Overly Complex Board Game"
-    public static void main(String[] args) {
+    public static void main(String[] args) throws IOException {
         Scanner kb = new Scanner(System.in);
 
-        Board tB = new Board();
-        PacketSend packet = new PacketSend(Integer.parseInt(args[0]),Integer.parseInt(args[1]));
+        int player = Integer.parseInt(args[0]);
+        int port   = Integer.parseInt(args[1]);
+
+        PacketServer server = null;
+        PacketSend   packet = null;
 
         if (Integer.parseInt(args[0]) == 1) {
             try {
-                new PacketServer(Integer.parseInt(args[1]));
+                System.out.println("foo");
+                server = new PacketServer(port);
+                System.out.println("bar");
+                server.start();
+                System.out.println("foo");
+                packet = new PacketSend(player,port);
+                System.out.println("bar");
+                packet.starts();
+            } catch (java.net.ConnectException e) {
+                e.printStackTrace();
             } catch (IOException e) {
-                System.err.println("Well, this happened: "+e);
+                e.printStackTrace();
             }
+
         }
+
+        Board tB = new Board();
+
 
         JFrame win = new JFrame("ShipBattle");
         win.setSize(1280,660);
@@ -33,8 +49,10 @@ public class Battleship { // AKA "Overly Complex Board Game"
         while (true) {
             System.out.print("Where would you like to hit? ");
             String hit = kb.next();
-            System.out.println(tB.thisCoord(hit).hasShip());
-            tB.hit(tB.thisCoord(hit));
+
+            String hit2 = packet.send(hit);
+
+            tB.hit(tB.thisCoord(hit2));
         }
     }
 }

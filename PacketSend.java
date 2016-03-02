@@ -25,7 +25,7 @@ public class PacketSend {
      * @param player The player number of the player that is sending the packet.
      * @param port   The port # of ther server that the player is connected to.
      */
-    public PacketSend(int player, int port) {
+    public PacketSend(int player, int port) throws IOException {
         this.PORT = port;
 
         switch (player) {
@@ -33,27 +33,32 @@ public class PacketSend {
             case PLAYER_TWO: player = 2; break;
         }
 
+    }
+
+    public void starts() {
         try {
             client = new Socket(LOCAL_HOST,PORT);
         } catch (IOException e) {
-            System.err.println("Well, this happened: "+e);
+            e.printStackTrace();
         }
     }
 
-    public void send(String s) throws IOException {
+    public Socket getSocket() {
+        return client;
+    }
+
+    public String send(String s) throws IOException {
         OutputStream outToServer = client.getOutputStream();
         DataOutputStream out     = new DataOutputStream(outToServer);
 
         out.writeUTF(s);
-    }
 
-    public String recieve() throws IOException {
         InputStream inFromServer = client.getInputStream();
         DataInputStream in       = new DataInputStream(inFromServer);
 
-        String s = in.readUTF();
+        String line = in.readUTF();
         client.close();
 
-        return s;
+        return line;
     }
 }
