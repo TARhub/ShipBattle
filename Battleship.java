@@ -1,10 +1,10 @@
 import java.util.Scanner;
+import java.io.IOException;
 import javax.swing.JFrame;
 
 /**
  * Plays a game of battleship (not capitalized, jokes on you Hasbro)
  *
- * @author Thomas A. Rodriguez
  * @version %I%, %G%
  * @since 0.0
  */
@@ -13,6 +13,15 @@ public class Battleship { // AKA "Overly Complex Board Game"
         Scanner kb = new Scanner(System.in);
 
         Board tB = new Board();
+        PacketSend packet = new PacketSend(Integer.parseInt(args[0]),Integer.parseInt(args[1]));
+
+        if (Integer.parseInt(args[0]) == 1) {
+            try {
+                new PacketServer(Integer.parseInt(args[1]));
+            } catch (IOException e) {
+                System.err.println("Well, this happened: "+e);
+            }
+        }
 
         JFrame win = new JFrame("ShipBattle");
         win.setSize(1280,660);
