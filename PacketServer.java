@@ -1,5 +1,6 @@
 import java.io.*;
 import java.net.*;
+import java.util.ArrayList;
 
 /**
  * Redirects packets to clients via a LAN server.
@@ -7,12 +8,10 @@ import java.net.*;
  * @version %I%
  * @since 1.3
  */
-public class PacketServer {
+public class PacketServer extends Thread {
     private ServerSocket serverSocket;
     private Socket socket = null;
-    private final int    PORT;
-
-    private EchoThread echoThread;
+    private final int PORT;
 
     /**
      * Constructs a <code>PacketServer</code> object using a port.
@@ -23,58 +22,48 @@ public class PacketServer {
      */
     public PacketServer(int port) throws IOException {
         this.PORT = port;
-        serverSocket = new ServerSocket(PORT);
-        serverSocket.setSoTimeout(15000);
+    }
 
+    @Override
+    public void start() {
+        try {
+            serverSocket = new ServerSocket(PORT);
+            serverSocket.setSoTimeout(15000);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
 
-        while(true) {
-            socket = serverSocket.accept();
-            echoThread = new EchoThread(socket);
-            echoThread.start();
+        for (int i=0;i<2;i++) {
+            try {
+                socket = serverSocket.accept();
+                new Thread(new PacketServer(socket.getPort())).start();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         }
     }
 
-    /**
-     * Thread for the PacketServer, which recieves packets and immediately
-     * sends it to the other client.
-     *
-     * @version %I%
-     * @since 1.3
-     */
-    public class EchoThread extends Thread {
-        private Socket clientSocket;
+    @Override
+    public void run() {
+        InputStream inFromClient  = null;
+        BufferedReader in         = null;
+        DataOutputStream toClient = null;
 
-        /**
-         * Constructor for the <code>EchoThread</code>.
-         *
-         * @param clientSocket Socket from a client that will send and
-         * recieve packets
-         */
-        public EchoThread(Socket clientSocket) {
-            this.clientSocket = clientSocket;
+        try {
+            inFromClient = socket.getInputStream();
+            in = new BufferedReader(new InputStreamReader(inFromClient));
+            toClient = new DataOutputStream(socket.getOutputStream());
+        } catch (IOException e) {
+            e.printStackTrace();
         }
 
-        @Override
-        public void run() {
-            InputStream inFromClient  = null;
-            BufferedReader in         = null;
-            DataOutputStream toClient = null;
-
-            try {
-                inFromClient = clientSocket.getInputStream();
-                in = new BufferedReader(new InputStreamReader(inFromClient));
-                toClient = new DataOutputStream(clientSocket.getOutputStream());
-            } catch (IOException e) {
-                System.err.println("Well, this happened: "+e);
-            }
-
-            try {
-                String txt = in.readLine();
-                toClient.writeUTF(txt);
-                toClient.flush();
-            } catch (IOException e) {
-                System.err.println("Well, this happened: "+e);
-            }
+        try {
+            String txt = in.readLine();
+            System.out.println(txt);
+            toClient.writeUTF(txt);
+            toClient.flush();
+        } catch (IOException e) {
+            e.printStackTrace();
         }
     }
 }
