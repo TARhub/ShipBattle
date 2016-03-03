@@ -10,7 +10,7 @@ import java.util.ArrayList;
  */
 public class PacketServer extends Thread {
     private ServerSocket serverSocket;
-    private Socket socket = null;
+    private PacketRunnable pR = null;
     private final int PORT;
 
     /**
@@ -35,35 +35,61 @@ public class PacketServer extends Thread {
 
         for (int i=0;i<2;i++) {
             try {
-                socket = serverSocket.accept();
-                new Thread(new PacketServer(socket.getPort())).start();
+                System.out.println("foo!");
+                pR = new PacketRunnable(serverSocket.accept());
+                Thread t = new Thread(pR);
+                t.start();
+                System.out.println("bar!");
+                new Thread(new PacketServer(pR.getPort())).start();
+                System.out.println("bar!1");
             } catch (IOException e) {
                 e.printStackTrace();
             }
         }
     }
 
-    @Override
-    public void run() {
-        InputStream inFromClient  = null;
-        BufferedReader in         = null;
-        DataOutputStream toClient = null;
+    public class PacketRunnable implements Runnable {
+        private Socket client;
 
-        try {
-            inFromClient = socket.getInputStream();
-            in = new BufferedReader(new InputStreamReader(inFromClient));
-            toClient = new DataOutputStream(socket.getOutputStream());
-        } catch (IOException e) {
-            e.printStackTrace();
+        public PacketRunnable(Socket client) {
+            this.client = client;
         }
 
-        try {
-            String txt = in.readLine();
-            System.out.println(txt);
-            toClient.writeUTF(txt);
-            toClient.flush();
-        } catch (IOException e) {
-            e.printStackTrace();
+        public int getPort() {
+            return client.getPort();
+        }
+
+        @Override
+        public void run() {
+            InputStream inFromClient  = null;
+            BufferedReader in         = null;
+            DataOutputStream toClient = null;
+
+            try {
+                System.out.println("foo!1");
+                inFromClient = client.getInputStream();
+                System.out.println("foo!2");
+                in = new BufferedReader(new InputStreamReader(inFromClient));
+                System.out.println("foo!3");
+                toClient = new DataOutputStream(client.getOutputStream());
+                System.out.println("foo!4");
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+
+            try {
+                System.out.println("foo!5");
+                String txt = in.readLine();
+                System.out.println("foo!6");
+                System.out.println(txt);
+                System.out.println("foo!7");
+                toClient.writeUTF(txt);
+                System.out.println("foo!8");
+                toClient.flush();
+                System.out.println("foo!9");
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         }
     }
 }
