@@ -25,7 +25,7 @@ public class PacketServer extends Thread {
     }
 
     @Override
-    public void start() {
+    public void run() {
         try {
             serverSocket = new ServerSocket(PORT);
             serverSocket.setSoTimeout(15000);
@@ -48,11 +48,13 @@ public class PacketServer extends Thread {
         }
     }
 
-    public class PacketRunnable implements Runnable {
+    private class PacketRunnable implements Runnable {
         private Socket client;
 
         public PacketRunnable(Socket client) {
             this.client = client;
+
+
         }
 
         public int getPort() {
