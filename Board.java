@@ -87,7 +87,7 @@ public class Board extends Canvas implements MouseListener {
                 g.drawImage(water,i+640,j,this);
 
 		try {
-			for (int i=0;i<ships.size(0);i++) {
+			for (int i=0;i<ships.size();i++) {
 				placeShip(ships.get(i),g);
 			}
 		} catch (IOException e) {
@@ -246,7 +246,7 @@ public class Board extends Canvas implements MouseListener {
 
 
 	public void checkSinking() {
-		for (int i=0;i<ships.size(0);i++) {
+		for (int i=0;i<ships.size();i++) {
 			if (ships.get(0).isSunk() == true)
 				ships.remove(i);
 		}
