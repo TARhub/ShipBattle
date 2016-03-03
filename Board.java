@@ -87,11 +87,9 @@ public class Board extends Canvas implements MouseListener {
                 g.drawImage(water,i+640,j,this);
 
 		try {
-			placeShip(ships.get(0),g);
-			placeShip(ships.get(1),g);
-			placeShip(ships.get(2),g);
-			placeShip(ships.get(3),g);
-			placeShip(ships.get(4),g);
+			for (int i=0;i<ships.size(0);i++) {
+				placeShip(ships.get(i),g);
+			}
 		} catch (IOException e) {
 			System.err.println("Well, this happened: "+e);
 		} catch (IndexOutOfBoundsException d) {
@@ -241,7 +239,17 @@ public class Board extends Canvas implements MouseListener {
 			thisCoord(c).setMiss();
 			System.out.println("Miss!");
 		}
+		checkSinking();
+
 		repaint();
+	}
+
+
+	public void checkSinking() {
+		for (int i=0;i<ships.size(0);i++) {
+			if (ships.get(0).isSunk() == true)
+				ships.remove(i);
+		}
 	}
 
     public void mouseClicked( MouseEvent evt ) {}
