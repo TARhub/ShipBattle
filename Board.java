@@ -1,6 +1,9 @@
 import java.awt.*;
 import java.awt.event.*;
 import java.awt.image.BufferedImage;
+import java.awt.Graphics2D;
+import java.awt.geom.AffineTransform;
+import java.awt.image.AffineTransformOp;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -23,10 +26,10 @@ import javax.imageio.ImageIO;
  * @since 1.0
  */
 public class Board extends Canvas implements MouseListener {
-	private Image radar;
-    private Image water;
-	private Image hit;
-	private Image miss;
+	private BufferedImage radar;
+  private BufferedImage water;
+	private BufferedImage hit;
+	private BufferedImage miss;
 
     private Coord[][] coords;
     private String[][] boardnames;
@@ -51,9 +54,13 @@ public class Board extends Canvas implements MouseListener {
 
         try {
 			radar = ImageIO.read(new File("textures/radar.png"));
-			water = ImageIO.read(new File("textures/water.png"));
+			radar = resizeImage(radar,640,640);
+			water = ImageIO.read(new File("textures/water.jpg"));
+			water = resizeImage(water,64,64);
 			hit   = ImageIO.read(new File("textures/hit.png"));
+			hit = resizeImage(hit,16,16);
 			miss  = ImageIO.read(new File("textures/miss.png"));
+			miss = resizeImage(miss,16,16);
         } catch (IOException e) {
             System.err.println("Well, this happened: "+e);
         }
@@ -108,6 +115,29 @@ public class Board extends Canvas implements MouseListener {
 				}
 			}
 	}
+
+
+	/**
+		* @param originalImage is the image to be resized
+		* @param type is the numerical representation of the image type
+		* @param imgWidth the width to resize the image to
+		* @param imgHeight the height to resize the image to
+		* @return resizedImage is the newly resized image
+		*/
+		public static BufferedImage resizeImage(BufferedImage image, int width, int height) throws IOException {
+	    int imageWidth  = image.getWidth();
+	    int imageHeight = image.getHeight();
+
+	    double scaleX = (double)width/imageWidth;
+	    double scaleY = (double)height/imageHeight;
+	    AffineTransform scaleTransform = AffineTransform.getScaleInstance(scaleX, scaleY);
+	    AffineTransformOp bilinearScaleOp = new AffineTransformOp(scaleTransform, AffineTransformOp.TYPE_BILINEAR);
+
+	    return bilinearScaleOp.filter(
+	        image,
+	        new BufferedImage(width, height, image.getType()));
+			}
+
 
 	/**
 	 * @param   c a String that refers to a coord in the String + int format.
