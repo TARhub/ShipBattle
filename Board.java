@@ -31,8 +31,8 @@ public class Board extends Canvas implements MouseListener {
 	private BufferedImage hit;
 	private BufferedImage miss;
 
-    private Coord[][] coords;
-    private String[][] boardnames;
+	private Coord[][] coords;
+  private String[][] boardnames;
 	private ArrayList<Ship> ships = new ArrayList<Ship>();
 	private boolean placingShips = true;
 
@@ -49,10 +49,10 @@ public class Board extends Canvas implements MouseListener {
 	 * method, which will randomly place ships on the board.
 	 */
     public Board() {
-        coords = new Coord[10][10];
-        boardnames = new String[10][10];
+      coords = new Coord[10][10];
+      boardnames = new String[10][10];
 
-        try {
+      try {
 			radar = ImageIO.read(new File("textures/radar.png"));
 			radar = resizeImage(radar,640,640);
 			water = ImageIO.read(new File("textures/water.jpg"));
@@ -61,24 +61,24 @@ public class Board extends Canvas implements MouseListener {
 			hit = resizeImage(hit,16,16);
 			miss  = ImageIO.read(new File("textures/miss.png"));
 			miss = resizeImage(miss,16,16);
-        } catch (IOException e) {
-            System.err.println("Well, this happened: "+e);
+      } catch (IOException e) {
+          System.err.println("Well, this happened: "+e);
+      }
+
+      for (int a=0;a<10;a++)
+        for (int b=0;b<10;b++) {
+          Coord c = new Coord(a,b);
+            coords[a][b] = c;
         }
 
-        for (int a=0;a<10;a++)
-            for (int b=0;b<10;b++) {
-                Coord c = new Coord(a,b);
-                coords[a][b] = c;
-            }
-
-        int e=0;
+      int e=0;
         for (char c='A';c<'K';c++) {
-            for (int d=1;d<11;d++)
-                boardnames[e][d-1] = String.valueOf(c)+String.valueOf(d);
+          for (int d=1;d<11;d++)
+            boardnames[e][d-1] = String.valueOf(c)+String.valueOf(d);
             e++;
         }
 
-		buildBattlefield();
+			buildBattlefield();
     }
 
 	/**
@@ -134,8 +134,8 @@ public class Board extends Canvas implements MouseListener {
 	    AffineTransformOp bilinearScaleOp = new AffineTransformOp(scaleTransform, AffineTransformOp.TYPE_BILINEAR);
 
 	    return bilinearScaleOp.filter(
-	        image,
-	        new BufferedImage(width, height, image.getType()));
+	      image,
+	      new BufferedImage(width, height, image.getType()));
 			}
 
 
