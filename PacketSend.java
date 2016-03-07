@@ -59,6 +59,8 @@ public class PacketSend {
         String line = in.readUTF();
         client.close();
 
+        System.out.println(line);
+
         return line;
     }
 }
