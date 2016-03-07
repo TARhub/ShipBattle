@@ -10,6 +10,7 @@ import java.util.ArrayList;
  */
 public class PacketServer extends Thread {
     private ServerSocket serverSocket;
+    private ArrayList<PacketRunnable> runnables = new ArrayList<PacketRunnable>();
     private PacketRunnable pR = null;
     private final int PORT;
 
@@ -28,14 +29,23 @@ public class PacketServer extends Thread {
     public void run() {
         try {
             serverSocket = new ServerSocket(PORT);
-            serverSocket.setSoTimeout(15000);
+            serverSocket.setSoTimeout(1500000);
         } catch (IOException e) {
             e.printStackTrace();
         }
 
         for (int i=0;i<2;i++) {
             try {
-                pR = new PacketRunnable(serverSocket.accept());
+                runnables.add(new PacketRunnable(serverSocket.accept()));
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+
+        for (int i=0;i<2;i++) {
+            try {
+                pR = runnables.get(i);
+                pR.switchSocket(runnables.get(Math.abs(i-1)).getSocket());
                 Thread t = new Thread(pR);
                 t.start();
                 new Thread(new PacketServer(pR.getPort())).start();
@@ -50,12 +60,18 @@ public class PacketServer extends Thread {
 
         public PacketRunnable(Socket client) {
             this.client = client;
-
-
         }
 
         public int getPort() {
             return client.getPort();
+        }
+
+        public Socket getSocket() {
+            return client;
+        }
+
+        public void switchSocket(Socket s) {
+            client = s;
         }
 
         @Override
