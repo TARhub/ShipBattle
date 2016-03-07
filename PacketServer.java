@@ -35,13 +35,10 @@ public class PacketServer extends Thread {
 
         for (int i=0;i<2;i++) {
             try {
-                System.out.println("foo!");
                 pR = new PacketRunnable(serverSocket.accept());
                 Thread t = new Thread(pR);
                 t.start();
-                System.out.println("bar!");
                 new Thread(new PacketServer(pR.getPort())).start();
-                System.out.println("bar!1");
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -68,27 +65,17 @@ public class PacketServer extends Thread {
             DataOutputStream toClient = null;
 
             try {
-                System.out.println("foo!1");
                 inFromClient = client.getInputStream();
-                System.out.println("foo!2");
                 in = new BufferedReader(new InputStreamReader(inFromClient));
-                System.out.println("foo!3");
                 toClient = new DataOutputStream(client.getOutputStream());
-                System.out.println("foo!4");
             } catch (IOException e) {
                 e.printStackTrace();
             }
 
             try {
-                System.out.println("foo!5");
                 String txt = in.readLine();
-                System.out.println("foo!6");
-                System.out.println(txt);
-                System.out.println("foo!7");
                 toClient.writeUTF(txt);
-                System.out.println("foo!8");
                 toClient.flush();
-                System.out.println("foo!9");
             } catch (IOException e) {
                 e.printStackTrace();
             }
