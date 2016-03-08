@@ -56,7 +56,7 @@ public class Battleship { // AKA "Overly Complex Board Game"
             System.out.print("Where would you like to hit? ");
             String hit = kb.next();
 
-            String hit2 = packet.send(hit);
+            String hit2 = packet.packet(hit);
 
             tB.hit(tB.thisCoord(hit2));
         }

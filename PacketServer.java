@@ -37,18 +37,9 @@ public class PacketServer extends Thread {
         for (int i=0;i<2;i++) {
             try {
                 runnables.add(new PacketRunnable(serverSocket.accept()));
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        }
-
-        for (int i=0;i<2;i++) {
-            try {
                 pR = runnables.get(i);
-                pR.switchSocket(runnables.get(Math.abs(i-1)).getSocket());
                 Thread t = new Thread(pR);
                 t.start();
-                new Thread(new PacketServer(pR.getPort())).start();
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -68,10 +59,6 @@ public class PacketServer extends Thread {
 
         public Socket getSocket() {
             return client;
-        }
-
-        public void switchSocket(Socket s) {
-            client = s;
         }
 
         @Override

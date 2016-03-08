@@ -47,7 +47,7 @@ public class PacketSend {
         return client;
     }
 
-    public String send(String s) throws IOException {
+    public String packet(String s) throws IOException {
         OutputStream outToServer = client.getOutputStream();
         DataOutputStream out     = new DataOutputStream(outToServer);
 
