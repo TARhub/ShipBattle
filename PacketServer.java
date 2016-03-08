@@ -9,9 +9,9 @@ import java.util.ArrayList;
  * @since 1.3
  */
 public class PacketServer extends Thread {
+    private ArrayList<PacketRunnable> runnables;
+    private LinkedBlockingQueue<String> packets;
     private ServerSocket serverSocket;
-    private ArrayList<PacketRunnable> runnables = new ArrayList<PacketRunnable>();
-    private PacketRunnable pR = null;
     private final int PORT;
 
     /**
@@ -21,29 +21,31 @@ public class PacketServer extends Thread {
      *
      * @param port The port # of the server.
      */
-    public PacketServer(int port) throws IOException {
-        this.PORT = port;
-    }
+    public PacketServer(int port) {
+        // http://stackoverflow.com/questions/13115784/sending-a-message-to-all-clients-client-server-communication
 
-    @Override
-    public void run() {
+        this.PORT = port;
+
         try {
+            runnables = new ArrayList<Runnables>();
+            packets   = new LinkedBlockingQueue<String>();
             serverSocket = new ServerSocket(PORT);
-            serverSocket.setSoTimeout(1500000);
         } catch (IOException e) {
             e.printStackTrace();
         }
 
-        for (int i=0;i<2;i++) {
-            try {
-                runnables.add(new PacketRunnable(serverSocket.accept()));
-                pR = runnables.get(i);
-                Thread t = new Thread(pR);
-                t.start();
-            } catch (IOException e) {
-                e.printStackTrace();
+        Thread accept = new Thread() {
+            public void run() {
+                try {
+                    runnables.add(new PacketRunnable(serverSocket.accept()));
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
             }
         }
+
+        accept.setDaemon(true);
+        accept.start();
     }
 
     private class PacketRunnable implements Runnable {
