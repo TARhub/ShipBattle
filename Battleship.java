@@ -20,10 +20,15 @@ public class Battleship { // AKA "Overly Complex Board Game"
 
         if ( player == 1 ) {
             try {
+                System.out.println("foo");
                 server = new PacketServer(port);
+                System.out.println("Server");
                 server.start();
+                System.out.println("started");
                 packet = new PacketSend(player,port);
+                System.out.println("Client");
                 packet.starts();
+                System.out.println("started");
             } catch (java.net.ConnectException e) {
                 e.printStackTrace();
             } catch (IOException e) {
@@ -33,7 +38,9 @@ public class Battleship { // AKA "Overly Complex Board Game"
         }
         else if ( player == 2 ) {
             try {
+                System.out.println("foo");
                 packet = new PacketSend(player,port);
+                System.out.println("bar");
                 packet.starts();
             } catch (java.net.ConnectException e) {
                 e.printStackTrace();
