@@ -1,6 +1,7 @@
 import java.io.*;
 import java.net.*;
 import java.util.ArrayList;
+import java.util.concurrent.*;
 
 /**
  * Redirects packets to clients via a LAN server.
@@ -27,7 +28,7 @@ public class PacketServer extends Thread {
         this.PORT = port;
 
         try {
-            runnables = new ArrayList<Runnables>();
+            runnables = new ArrayList<PacketRunnable>();
             packets   = new LinkedBlockingQueue<String>();
             serverSocket = new ServerSocket(PORT);
         } catch (IOException e) {
@@ -42,7 +43,7 @@ public class PacketServer extends Thread {
                     e.printStackTrace();
                 }
             }
-        }
+        };
 
         accept.setDaemon(true);
         accept.start();
