@@ -2,11 +2,19 @@ import java.io.*;
 import java.net.*;
 import java.util.*;
 
-public class PacketRunnable implements Runnable {
+public class PacketRunnable {
     private Socket client;
 
-    public PacketRunnable(Socket client) {
+    protected InputStream inFromClient  = null;
+    protected BufferedReader in         = null;
+    protected DataOutputStream out      = null;
+
+    public PacketRunnable(Socket client) throws IOException {
         this.client = client;
+
+        inFromClient = client.getInputStream();
+        in  = new BufferedReader(new InputStreamReader(inFromClient));
+        out = new DataOutputStream(client.getOutputStream());
     }
 
     public int getPort() {
@@ -17,26 +25,5 @@ public class PacketRunnable implements Runnable {
         return client;
     }
 
-    @Override
-    public void run() {
-        InputStream inFromClient  = null;
-        BufferedReader in         = null;
-        DataOutputStream toClient = null;
-
-        try {
-            inFromClient = client.getInputStream();
-            in = new BufferedReader(new InputStreamReader(inFromClient));
-            toClient = new DataOutputStream(client.getOutputStream());
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
-        try {
-            String txt = in.readLine();
-            toClient.writeUTF(txt);
-            toClient.flush();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
+    public void write(String packet) {}
 }
