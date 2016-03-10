@@ -48,4 +48,40 @@ public class PacketServer extends Thread {
         accept.setDaemon(true);
         accept.start();
     }
+
+    private class ClientConnection extends PacketRunnable {
+
+        ClientConnection(Socket client) throws IOException {
+            super(client);
+
+            Thread read = new Thread() {
+                @Override
+                public void run() {
+                    while (true) {
+                        try {
+                            String packet = in.readLine();
+                            packets.put(packet);
+                        } catch (IOException | InterruptedException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                }
+            };
+        }
+
+        @Override
+        public void write(String packet) {
+            try {
+                out.writeUTF(packet);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+
+
+    public void send(int player, String packet) {
+        runnables.get(player).write(packet);
+    }
 }
