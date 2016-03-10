@@ -9,7 +9,7 @@ public class PacketRunnable {
     protected BufferedReader in         = null;
     protected DataOutputStream out      = null;
 
-    public PacketRunnable(Socket client) throws IOException {
+    public PacketRunnable(Socket socket) throws IOException {
         this.client = client;
 
         inFromClient = client.getInputStream();

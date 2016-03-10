@@ -67,6 +67,9 @@ public class PacketServer extends Thread {
                     }
                 }
             };
+
+            read.setDaemon(true);
+            read.start();
         }
 
         @Override
