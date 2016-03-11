@@ -10,7 +10,7 @@ public class PacketRunnable {
     protected DataOutputStream out      = null;
 
     public PacketRunnable(Socket socket) throws IOException {
-        this.client = client;
+        this.client = socket;
 
         inFromClient = client.getInputStream();
         in  = new BufferedReader(new InputStreamReader(inFromClient));
