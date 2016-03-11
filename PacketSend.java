@@ -1,5 +1,7 @@
 import java.io.*;
 import java.net.*;
+import java.util.ArrayList;
+import java.util.concurrent.*;
 
 /**
  * Sends and recieves packets to/from the server.
@@ -16,7 +18,11 @@ public class PacketSend {
     private final int    PORT;
     private final int    player = -1;
 
+    private ServerConnection sC;
+    private LinkedBlockingQueue<String> packets;
     private Socket client;
+
+    private String storedPacket;
 
     /**
      * Constructs a <code>PacketSend</code> object using the player #,
@@ -27,40 +33,71 @@ public class PacketSend {
      */
     public PacketSend(int player, int port) throws IOException {
         this.PORT = port;
+        client = new Socket(LOCAL_HOST,PORT);
+
+        packets = new LinkedBlockingQueue<String>();
+        sC = new ServerConnection(client);
 
         switch (player) {
             case PLAYER_ONE: player = 1; break;
             case PLAYER_TWO: player = 2; break;
         }
 
+        Thread packetHandling = new Thread() {
+            public void run() {
+                while (true) {
+                    try {
+                        storedPacket = packets.take();
+                        System.out.println(storedPacket);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+        };
+
+        packetHandling.setDaemon(true);
+        packetHandling.start();
     }
 
-    public void starts() {
-        try {
-            client = new Socket(LOCAL_HOST,PORT);
-        } catch (IOException e) {
-            e.printStackTrace();
+    public String getHead() {
+        return storedPacket;
+    }
+
+    private class ServerConnection extends PacketRunnable {
+
+        ServerConnection(Socket server) throws IOException {
+            super(server);
+
+            Thread read = new Thread() {
+                @Override
+                public void run() {
+                    while (true) {
+                        try {
+                            String packet = in.readLine();
+                            packets.put(packet);
+                        } catch (IOException | InterruptedException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                }
+            };
+
+            read.setDaemon(true);
+            read.start();
+        }
+
+        @Override
+        public void write(String packet) {
+            try {
+                out.writeUTF(packet);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         }
     }
 
-    public Socket getSocket() {
-        return client;
-    }
-
-    public String packet(String s) throws IOException {
-        OutputStream outToServer = client.getOutputStream();
-        DataOutputStream out     = new DataOutputStream(outToServer);
-
-        out.writeUTF(s);
-
-        InputStream inFromServer = client.getInputStream();
-        DataInputStream in       = new DataInputStream(inFromServer);
-
-        String line = in.readUTF();
-        client.close();
-
-        System.out.println(line);
-
-        return line;
+    public void send(String packet) {
+        sC.write(packet);
     }
 }
