@@ -35,8 +35,13 @@ public class Battleship { // AKA "Overly Complex Board Game"
             }
         }
 
-        Board tB = new Board();
+        if ( player == 1 ) {
+            while (server.size() != 2) {
+                System.out.println("Waiting for second player on port "+port+".");
+            }
+        }
 
+        Board tB = new Board();
 
         JFrame win = new JFrame("ShipBattle");
         win.setSize(1280,660);
@@ -45,12 +50,19 @@ public class Battleship { // AKA "Overly Complex Board Game"
 		win.setVisible(true);
         win.setResizable(false);
 
-        while (true) {
-            System.out.print("Where would you like to hit? ");
-            String hit = kb.next();
-            packet.send(hit);
+        int turn = player;
 
-            tB.hit(tB.thisCoord(packet.getHead()));
+        while (true) {
+            if (turn == 1) {
+                System.out.print("Where would you like to hit? ");
+                String hit = kb.next();
+                packet.send(hit);
+                turn++;
+            }
+            else if (turn == 2) {
+                tB.hit(tB.thisCoord(packet.getHead()));
+                turn--;
+            }
         }
     }
 }

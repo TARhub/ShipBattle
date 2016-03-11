@@ -47,8 +47,10 @@ public class PacketSend {
             public void run() {
                 while (true) {
                     try {
+                        System.out.println("Yeet! Packet Handling.");
                         storedPacket = packets.take();
                         System.out.println(storedPacket);
+                        System.out.println("Yaw! PacketHandling.");
                     } catch (InterruptedException e) {
                         e.printStackTrace();
                     }
@@ -74,10 +76,12 @@ public class PacketSend {
                 public void run() {
                     while (true) {
                         try {
+                            System.out.println("Yeet! Reading.");
                             System.out.println(in.ready());
                             String packet = in.readLine();
                             System.out.println(packet);
                             packets.put(packet);
+                            System.out.println("Yaw! Reading.");
                         } catch (IOException | InterruptedException e) {
                             e.printStackTrace();
                         }

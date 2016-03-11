@@ -39,7 +39,9 @@ public class PacketServer {
             public void run() {
                 while (true) {
                     try {
+                        System.out.println("Yeet! Accept.");
                         runnables.add(new PacketRunnable(serverSocket.accept()));
+                        System.out.println("Yaw! Accept.");
                     } catch (IOException e) {
                         e.printStackTrace();
                     }
@@ -54,8 +56,10 @@ public class PacketServer {
             public void run() {
                 while (true) {
                     try {
+                        System.out.println("Yeet! Packet Handling.");
                         String packet = packets.take();
                         System.out.println(packet);
+                        System.out.println("Yaw! PacketHandling.");
                     } catch (InterruptedException e) {
                         e.printStackTrace();
                     }
@@ -77,8 +81,12 @@ public class PacketServer {
                 public void run() {
                     while (true) {
                         try {
+                            System.out.println("Yeet! Reading.");
+                            System.out.println(in.ready());
                             String packet = in.readLine();
+                            System.out.println(packet);
                             packets.put(packet);
+                            System.out.println("Yaw! Reading.");
                         } catch (IOException | InterruptedException e) {
                             e.printStackTrace();
                         }
@@ -100,7 +108,9 @@ public class PacketServer {
         }
     }
 
-
+    public int size() {
+        return runnables.size();
+    }
 
     public void send(int player, String packet) {
         runnables.get(player).write(packet);
