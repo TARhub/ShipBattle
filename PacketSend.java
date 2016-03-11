@@ -22,7 +22,7 @@ public class PacketSend {
     private LinkedBlockingQueue<String> packets;
     private Socket client;
 
-    private String storedPacket;
+    private String storedPacket = null;
 
     /**
      * Constructs a <code>PacketSend</code> object using the player #,
@@ -74,7 +74,9 @@ public class PacketSend {
                 public void run() {
                     while (true) {
                         try {
+                            System.out.println(in.ready());
                             String packet = in.readLine();
+                            System.out.println(packet);
                             packets.put(packet);
                         } catch (IOException | InterruptedException e) {
                             e.printStackTrace();
