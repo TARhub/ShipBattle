@@ -1,4 +1,5 @@
 import java.net.ConnectException;
+import java.util.Random;
 import java.util.Scanner;
 import java.io.IOException;
 import javax.swing.JFrame;
@@ -6,15 +7,30 @@ import javax.swing.JFrame;
 /**
  * Plays a game of battleship (not capitalized, jokes on you Hasbro)
  *
- * @version %I%, %G%
+ * @version %I%
  * @since 0.0
  */
 public class Battleship { // AKA "Overly Complex Board Game"
     public static void main(String[] args) throws IOException {
         Scanner kb = new Scanner(System.in);
+        int player = -1, port = -420;
 
-        int player = Integer.parseInt(args[0]);
-        int port   = Integer.parseInt(args[1]);
+        String mode = args[0];
+
+        if (mode.equals("start")) {
+            player = 1;
+            port = new Random().nextInt(16383) + 49152;
+            System.out.println("Game hosted on port "+port);
+        }
+        else if (mode.equals("join")) {
+            player = 2;
+            System.out.println("Enter port: ");
+            port = kb.nextInt();
+        }
+        else {
+            System.err.print("Wutrudoing?");
+            System.exit(0);
+        }
 
         PacketServer server = null;
         PacketSend   packet = null;
@@ -34,6 +50,7 @@ public class Battleship { // AKA "Overly Complex Board Game"
                 e.printStackTrace();
             }
         }
+
 
         if ( player == 1 ) {
             while (server.size() != 2) {
