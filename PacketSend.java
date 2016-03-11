@@ -22,6 +22,8 @@ public class PacketSend {
     private LinkedBlockingQueue<String> packets;
     private Socket client;
 
+    private String storedPacket;
+
     /**
      * Constructs a <code>PacketSend</code> object using the player #,
      * and the port number specified by the host of the Battleship server.
@@ -41,15 +43,30 @@ public class PacketSend {
             case PLAYER_TWO: player = 2; break;
         }
 
+        Thread packetHandling = new Thread() {
+            public void run() {
+                while (true) {
+                    try {
+                        storedPacket = packets.take();
+                        System.out.println(storedPacket);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+        };
+
+        packetHandling.setDaemon(true);
+        packetHandling.start();
     }
 
-    public Socket getSocket() {
-        return client;
+    public String getHead() {
+        return storedPacket;
     }
 
     private class ServerConnection extends PacketRunnable {
 
-        ServerConnection(Socket server) {
+        ServerConnection(Socket server) throws IOException {
             super(server);
 
             Thread read = new Thread() {

@@ -9,7 +9,7 @@ import java.util.concurrent.*;
  * @version %I%
  * @since 1.3
  */
-public class PacketServer extends Thread {
+public class PacketServer {
     private ArrayList<PacketRunnable> runnables;
     private LinkedBlockingQueue<String> packets;
     private ServerSocket serverSocket;
@@ -37,16 +37,34 @@ public class PacketServer extends Thread {
 
         Thread accept = new Thread() {
             public void run() {
-                try {
-                    runnables.add(new PacketRunnable(serverSocket.accept()));
-                } catch (IOException e) {
-                    e.printStackTrace();
+                while (true) {
+                    try {
+                        runnables.add(new PacketRunnable(serverSocket.accept()));
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
                 }
             }
         };
 
         accept.setDaemon(true);
         accept.start();
+
+        Thread packetHandling = new Thread() {
+            public void run() {
+                while (true) {
+                    try {
+                        String packet = packets.take();
+                        System.out.println(packet);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+        };
+
+        packetHandling.setDaemon(true);
+        packetHandling.start();
     }
 
     private class ClientConnection extends PacketRunnable {
