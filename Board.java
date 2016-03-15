@@ -86,18 +86,14 @@ public class Board extends Canvas implements MouseListener {
             for (int j=0;j<=576;j+=64)
                 g.drawImage(water,i+640,j,this);
 
-		for (int i=0;i<ships.size();i++) {
-			Ship s = ships.get(i);
-
-			if (! s.isSunk() == true) {
-				try {
-					placeShip(s,g);
-				} catch (IOException e) {
-					System.err.println("Well, this happened: "+e);
-				} catch (IndexOutOfBoundsException d) {
-					System.err.println("Well, this happened: "+d);
-				}
+		try {
+			for (int i=0;i<ships.size();i++) {
+				placeShip(ships.get(i),g);
 			}
+		} catch (IOException e) {
+			System.err.println("Well, this happened: "+e);
+		} catch (IndexOutOfBoundsException d) {
+			System.err.println("Well, this happened: "+d);
 		}
 
 		for (int a=0;a<10;a++)
@@ -115,7 +111,7 @@ public class Board extends Canvas implements MouseListener {
 
 	/**
 	 * @param   c a String that refers to a coord in the String + int format.
-	 * @returns a <code>Coord</code> from the board from a string.
+	 * @return a <code>Coord</code> from the board from a string.
 	 */
     public Coord thisCoord(String c) {
 		Coord co = new Coord(0,0);
@@ -131,7 +127,7 @@ public class Board extends Canvas implements MouseListener {
 
 	/**
 	 * @param   c another <code>Coord</code>
-	 * @returns a <code>Coord</code> from the board from a another coord.
+	 * @return a <code>Coord</code> from the board from a another coord.
 	 */
 	public Coord thisCoord(Coord c) {
 		return coords[c.x()][c.y()];
