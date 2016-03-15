@@ -1,21 +1,62 @@
+import java.net.ConnectException;
+import java.util.Random;
 import java.util.Scanner;
+import java.io.IOException;
 import javax.swing.JFrame;
 
 /**
  * Plays a game of battleship (not capitalized, jokes on you Hasbro)
  *
-<<<<<<< HEAD
  * @version %I%
- * @since 0.0 
-=======
- * @author Thomas A. Rodriguez
- * @version %I%, %G%
  * @since 0.0
->>>>>>> parent of 53f11cd... Merge pull request #6 from TARhub/client-server-branch
  */
 public class Battleship { // AKA "Overly Complex Board Game"
-    public static void main(String[] args) {
+    public static void main(String[] args) throws IOException {
         Scanner kb = new Scanner(System.in);
+        int player = -1, port = -420;
+
+        String mode = args[0];
+
+        if (mode.equals("start")) {
+            player = 1;
+            port = new Random().nextInt(16383) + 49152;
+            System.out.println("Game hosted on port "+port);
+        }
+        else if (mode.equals("join")) {
+            player = 2;
+            System.out.println("Enter port: ");
+            port = kb.nextInt();
+        }
+        else {
+            System.err.print("Wutrudoing?");
+            System.exit(0);
+        }
+
+        PacketServer server = null;
+        PacketSend   packet = null;
+
+        if ( player == 1 ) {
+            try {
+                server = new PacketServer(port);
+                packet = new PacketSend(player,port);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+        else if ( player == 2 ) {
+            try {
+                packet = new PacketSend(player,port);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+
+
+        if ( player == 1 ) {
+            while (server.size() != 2) {
+                System.out.println("Waiting for second player on port "+port+".");
+            }
+        }
 
         Board tB = new Board();
 
@@ -26,11 +67,19 @@ public class Battleship { // AKA "Overly Complex Board Game"
 		win.setVisible(true);
         win.setResizable(false);
 
+        int turn = player;
+
         while (true) {
-            System.out.print("Where would you like to hit? ");
-            String hit = kb.next();
-            System.out.println(tB.thisCoord(hit).hasShip());
-            tB.hit(tB.thisCoord(hit));
+            if (turn == 1) {
+                System.out.print("Where would you like to hit? ");
+                String hit = kb.next();
+                packet.send(hit);
+                turn++;
+            }
+            else if (turn == 2) {
+                tB.hit(tB.thisCoord(packet.getHead()));
+                turn--;
+            }
         }
     }
 }
