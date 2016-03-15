@@ -7,14 +7,14 @@ public class PacketRunnable {
 
     protected InputStream inFromClient  = null;
     protected BufferedReader in         = null;
-    protected ObjectOutputStream out      = null;
+    protected BufferedWriter out        = null;
 
     public PacketRunnable(Socket socket) throws IOException {
         this.client = socket;
 
         inFromClient = client.getInputStream();
         in  = new BufferedReader(new InputStreamReader(inFromClient));
-        out = new ObjectOutputStream(client.getOutputStream());
+        out = new BufferedWriter(new OutputStreamWriter(client.getOutputStream()));
     }
 
     public int getPort() {
@@ -25,5 +25,12 @@ public class PacketRunnable {
         return client;
     }
 
-    public void write(String packet) {}
+    public void write(String packet) {
+        try {
+            out.write(packet,0,packet.length());
+            out.flush();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
 }

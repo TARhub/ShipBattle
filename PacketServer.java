@@ -31,6 +31,7 @@ public class PacketServer {
             runnables = new ArrayList<PacketRunnable>();
             packets   = new LinkedBlockingQueue<String>();
             serverSocket = new ServerSocket(PORT);
+            serverSocket.setSoTimeout(100000);
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -83,8 +84,11 @@ public class PacketServer {
                         try {
                             System.out.println("Yeet! Reading.");
                             System.out.println(in.ready());
+                            System.out.println("1");
                             String packet = in.readLine();
+                            System.out.println("2");
                             System.out.println(packet);
+                            System.out.println("3");
                             packets.put(packet);
                             System.out.println("Yaw! Reading.");
                         } catch (IOException | InterruptedException e) {
@@ -96,15 +100,6 @@ public class PacketServer {
 
             read.setDaemon(true);
             read.start();
-        }
-
-        @Override
-        public void write(String packet) {
-            try {
-                out.writeUTF(packet);
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
         }
     }
 
