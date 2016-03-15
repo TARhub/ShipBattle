@@ -8,7 +8,7 @@ import javax.swing.JFrame;
  * Plays a game of battleship (not capitalized, jokes on you Hasbro)
  *
  * @version %I%
- * @since 0.0
+ * @since 0.0 
  */
 public class Battleship { // AKA "Overly Complex Board Game"
     public static void main(String[] args) throws IOException {
