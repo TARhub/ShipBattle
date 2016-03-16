@@ -41,7 +41,7 @@ public class PacketServer {
                 while (true) {
                     try {
                         System.out.println("Yeet! Accept.");
-                        runnables.add(new PacketRunnable(serverSocket.accept()));
+                        runnables.add(new ClientConnection(serverSocket.accept()));
                         System.out.println("Yaw! Accept.");
                     } catch (IOException e) {
                         e.printStackTrace();
@@ -59,7 +59,7 @@ public class PacketServer {
                     try {
                         System.out.println("Yeet! Packet Handling.");
                         String packet = packets.take();
-                        System.out.println(packet);
+                        System.out.println(packet+"\nYours truly, PacketHandling(server).");
                         System.out.println("Yaw! PacketHandling.");
                     } catch (InterruptedException e) {
                         e.printStackTrace();

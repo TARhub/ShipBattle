@@ -50,7 +50,7 @@ public class PacketSend {
                     try {
                         System.out.println("Yeet! Packet Handling.");
                         storedPacket = packets.take();
-                        System.out.println(storedPacket);
+                        System.out.println(storedPacket+"\nYours truly, PacketHandling(client).");
                         System.out.println("Yaw! PacketHandling.");
                     } catch (InterruptedException e) {
                         e.printStackTrace();
