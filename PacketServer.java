@@ -11,7 +11,7 @@ import java.util.concurrent.*;
  */
 public class PacketServer {
     private ArrayList<PacketRunnable> runnables;
-    private LinkedBlockingQueue<String> packets;
+    private LinkedBlockingQueue<Packet> packets;
     private ServerSocket serverSocket;
     private final int PORT;
 
@@ -29,7 +29,7 @@ public class PacketServer {
 
         try {
             runnables = new ArrayList<PacketRunnable>();
-            packets   = new LinkedBlockingQueue<String>();
+            packets   = new LinkedBlockingQueue<Packet>();
             serverSocket = new ServerSocket(PORT);
             serverSocket.setSoTimeout(100000);
         } catch (IOException e) {
@@ -57,9 +57,9 @@ public class PacketServer {
             public void run() {
                 while (true) {
                     try {
-                        System.out.println("Yeet! Packet Handling.");
-                        String packet = packets.take();
-                        System.out.println(packet+"\nYours truly, PacketHandling(server).");
+                        System.out.println("Yeet! Object Handling.");
+                        Packet packet = packets.take();
+                        System.out.println(packet.packet()+"\nYours truly, PacketHandling(server).");
                         System.out.println("Yaw! PacketHandling.");
                     } catch (InterruptedException e) {
                         e.printStackTrace();
@@ -83,15 +83,15 @@ public class PacketServer {
                     while (true) {
                         try {
                             System.out.println("Yeet! Reading.");
-                            System.out.println(in.ready());
                             System.out.println("1");
-                            String packet = in.readLine();
+                            Packet packet = (Packet) in.readObject();
                             System.out.println("2");
                             System.out.println(packet);
                             System.out.println("3");
                             packets.put(packet);
                             System.out.println("Yaw! Reading.");
-                        } catch (IOException | InterruptedException e) {
+                        } catch (IOException | InterruptedException
+                               | ClassNotFoundException e) {
                             e.printStackTrace();
                         }
                     }
@@ -107,7 +107,7 @@ public class PacketServer {
         return runnables.size();
     }
 
-    public void send(int player, String packet) {
-        runnables.get(player).write(packet);
+    public void send(Packet packet) {
+        runnables.get(packet.player()).write(packet);
     }
 }

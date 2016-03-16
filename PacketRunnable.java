@@ -6,15 +6,15 @@ public class PacketRunnable {
     private Socket client;
 
     protected InputStream inFromClient  = null;
-    protected BufferedReader in         = null;
-    protected BufferedWriter out        = null;
+    protected ObjectInputStream in      = null;
+    protected ObjectOutputStream out    = null;
 
     public PacketRunnable(Socket socket) throws IOException {
         this.client = socket;
 
         inFromClient = client.getInputStream();
-        in  = new BufferedReader(new InputStreamReader(inFromClient));
-        out = new BufferedWriter(new OutputStreamWriter(client.getOutputStream()));
+        in  = new ObjectInputStream(inFromClient);
+        out = new ObjectOutputStream(client.getOutputStream());
     }
 
     public int getPort() {
@@ -25,9 +25,9 @@ public class PacketRunnable {
         return client;
     }
 
-    public void write(String packet) {
+    public void write(Packet packet) {
         try {
-            out.write(packet,0,packet.length());
+            out.writeObject((Object)packet);
             out.flush();
         } catch (IOException e) {
             e.printStackTrace();
