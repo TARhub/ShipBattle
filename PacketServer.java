@@ -57,7 +57,7 @@ public class PacketServer {
             public void run() {
                 while (true) {
                     try {
-                        System.out.println("Yeet! Object Handling.");
+                        System.out.println("Yeet! PacketHandling.");
                         Packet packet = packets.take();
                         System.out.println(packet.packet()+"\nYours truly, PacketHandling(server).");
                         System.out.println("Yaw! PacketHandling.");
