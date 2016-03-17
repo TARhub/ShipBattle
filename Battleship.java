@@ -54,7 +54,7 @@ public class Battleship { // AKA "Overly Complex Board Game"
 
         if ( player == 1 ) {
             while (server.size() != 2) {
-                System.out.println("Waiting for second player on port "+port+".+\r");
+                System.out.println("Waiting for second player on port "+port+".");
             }
         }
 

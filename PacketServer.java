@@ -55,11 +55,17 @@ public class PacketServer {
 
         Thread packetHandling = new Thread() {
             public void run() {
+                int i=1;
                 while (true) {
                     try {
                         System.out.println("Yeet! Packet Handling.");
                         String packet = packets.take();
                         System.out.println(packet+"\nYours truly, PacketHandling(server).");
+
+                        send(i,packet);
+                        if (i == 0) {i++;}
+                        else if (i == 1) {i--;}
+
                         System.out.println("Yaw! PacketHandling.");
                     } catch (InterruptedException e) {
                         e.printStackTrace();

@@ -5,16 +5,18 @@ import java.util.*;
 public class PacketRunnable {
     private Socket client;
 
-    protected InputStream inFromClient  = null;
     protected BufferedReader in         = null;
-    protected BufferedWriter out        = null;
+    protected PrintWriter    out        = null;
 
-    public PacketRunnable(Socket socket) throws IOException {
+    public PacketRunnable(Socket socket) {
         this.client = socket;
 
-        inFromClient = client.getInputStream();
-        in  = new BufferedReader(new InputStreamReader(inFromClient));
-        out = new BufferedWriter(new OutputStreamWriter(client.getOutputStream()));
+        try {
+            in  = new BufferedReader(new InputStreamReader(client.getInputStream()));
+            out = new PrintWriter(new OutputStreamWriter(client.getOutputStream()));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     public int getPort() {
@@ -26,11 +28,7 @@ public class PacketRunnable {
     }
 
     public void write(String packet) {
-        try {
-            out.write(packet,0,packet.length());
-            out.flush();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        out.println(packet);
+        out.flush();
     }
 }
