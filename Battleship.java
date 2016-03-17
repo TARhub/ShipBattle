@@ -58,7 +58,7 @@ public class Battleship { // AKA "Overly Complex Board Game"
             }
         }
 
-        Board tB = new Board();
+        Board tB = new Board(player);
 
         JFrame win = new JFrame("ShipBattle");
         win.setSize(1280,660);
@@ -68,10 +68,9 @@ public class Battleship { // AKA "Overly Complex Board Game"
         win.setResizable(false);
 
         int turn = player;
+        ExecutorService exec = Executors.newFixedThreadPool(1);
 
         while (true) {
-            ExecutorService exec = Executors.newFixedThreadPool(1);
-
             if (turn == 1) {
                 System.out.print("Where would you like to hit? ");
                 String hit = kb.next();
@@ -80,9 +79,19 @@ public class Battleship { // AKA "Overly Complex Board Game"
             }
             else if (turn == 2) {
                 Future<String> future = exec.submit(packet.getHead());
+                String toHit = null;
 
+                try {
+                    toHit = future.get();
+                } catch (InterruptedException | ExecutionException e) {
+                    e.printStackTrace();
+                }
+
+                tB.hit(tB.thisCoord(toHit));
                 turn--;
             }
         }
+
+        //exec.shutdownNow();
     }
 }

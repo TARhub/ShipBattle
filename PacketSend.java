@@ -64,12 +64,11 @@ public class PacketSend {
     }
 
     public Callable<String> getHead() {
-        Callable<String> task = () -> {
-            try {
-                while(new String(storedPacket) == null) {}
-                return new String(storedPacket);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
+        Callable<String> task = new Callable<String>() {
+            @Override
+            public String call() throws Exception {
+                while(storedPacket == null) {System.out.println("It's null!");}
+                return storedPacket;
             }
         };
 

@@ -28,6 +28,8 @@ public class Board extends Canvas implements MouseListener {
 	private Image hit;
 	private Image miss;
 
+	private int player;
+
     private Coord[][] coords;
     private String[][] boardnames;
 	private ArrayList<Ship> ships = new ArrayList<Ship>();
@@ -45,9 +47,10 @@ public class Board extends Canvas implements MouseListener {
 	 * and the miss symbol. Lastly, it will then instantiate the {@link #buildBattlefield()}
 	 * method, which will randomly place ships on the board.
 	 */
-    public Board() {
+    public Board(int player) {
         coords = new Coord[10][10];
         boardnames = new String[10][10];
+		this.player = player;
 
         try {
 			radar = ImageIO.read(new File("textures/radar.png"));
@@ -99,6 +102,9 @@ public class Board extends Canvas implements MouseListener {
 				}
 			}
 		}
+		Font myFont = new Font("Arial",Font.BOLD,48);
+		g.setFont(myFont);
+		g.drawString(Integer.toString(player),640,70);
 
 		for (int a=0;a<10;a++)
 			for (int b=0;b<10;b++) {
