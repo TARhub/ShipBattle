@@ -1,7 +1,7 @@
 import java.net.ConnectException;
-import java.util.Random;
-import java.util.Scanner;
 import java.io.IOException;
+import java.util.*;
+import java.util.concurrent.*;
 import javax.swing.JFrame;
 
 /**
@@ -43,6 +43,7 @@ public class Battleship { // AKA "Overly Complex Board Game"
                 e.printStackTrace();
             }
         }
+
         else if ( player == 2 ) {
             try {
                 packet = new PacketSend(player,port);
@@ -50,7 +51,6 @@ public class Battleship { // AKA "Overly Complex Board Game"
                 e.printStackTrace();
             }
         }
-
 
         if ( player == 1 ) {
             while (server.size() != 2) {
@@ -70,6 +70,8 @@ public class Battleship { // AKA "Overly Complex Board Game"
         int turn = player;
 
         while (true) {
+            ExecutorService exec = Executors.newFixedThreadPool(1);
+
             if (turn == 1) {
                 System.out.print("Where would you like to hit? ");
                 String hit = kb.next();
@@ -77,8 +79,8 @@ public class Battleship { // AKA "Overly Complex Board Game"
                 turn++;
             }
             else if (turn == 2) {
-                while (packet.getHead() == null) {}
-                tB.hit(tB.thisCoord(packet.getHead()));
+                Future<String> future = exec.submit(packet.getHead());
+
                 turn--;
             }
         }

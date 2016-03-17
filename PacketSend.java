@@ -37,7 +37,7 @@ public class PacketSend {
         client.setSoTimeout(100000);
 
         packets = new LinkedBlockingQueue<String>();
-        sC = new ServerConnection(client);
+        sC      = new ServerConnection(client);
 
         switch (player) {
             case PLAYER_ONE: player = 1; break;
@@ -63,8 +63,17 @@ public class PacketSend {
         packetHandling.start();
     }
 
-    public String getHead() {
-        return storedPacket;
+    public Callable<String> getHead() {
+        Callable<String> task = () -> {
+            try {
+                while(new String(storedPacket) == null) {}
+                return new String(storedPacket);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        };
+
+        return task;
     }
 
     private class ServerConnection extends PacketRunnable {
