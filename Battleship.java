@@ -28,7 +28,7 @@ public class Battleship { // AKA "Overly Complex Board Game"
             port = kb.nextInt();
         }
         else {
-            System.err.print("Wutrudoing?");
+            System.err.println("Wutrudoing?");
             System.exit(0);
         }
 
@@ -77,6 +77,7 @@ public class Battleship { // AKA "Overly Complex Board Game"
                 turn++;
             }
             else if (turn == 2) {
+                while (packet.getHead() == null) {}
                 tB.hit(tB.thisCoord(packet.getHead()));
                 turn--;
             }

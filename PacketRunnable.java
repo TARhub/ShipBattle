@@ -12,8 +12,7 @@ public class PacketRunnable {
     public PacketRunnable(Socket socket) throws IOException {
         this.client = socket;
 
-        inFromClient = client.getInputStream();
-        in  = new ObjectInputStream(inFromClient);
+        in  = new ObjectInputStream(client.getInputStream());
         out = new ObjectOutputStream(client.getOutputStream());
     }
 

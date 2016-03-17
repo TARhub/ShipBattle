@@ -38,7 +38,7 @@ public class PacketServer {
 
         Thread accept = new Thread() {
             public void run() {
-                while (true) {
+                for (int i=0;i<2;i++) {
                     try {
                         System.out.println("Yeet! Accept.");
                         runnables.add(new ClientConnection(serverSocket.accept()));
@@ -57,7 +57,7 @@ public class PacketServer {
             public void run() {
                 while (true) {
                     try {
-                        System.out.println("Yeet! PacketHandling.");
+                        System.out.println("Yeet! PacketHandling (Server).");
                         Packet packet = packets.take();
                         System.out.println(packet.packet()+"\nYours truly, PacketHandling(server).");
                         System.out.println("Yaw! PacketHandling.");
