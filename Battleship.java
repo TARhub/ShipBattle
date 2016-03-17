@@ -73,7 +73,7 @@ public class Battleship { // AKA "Overly Complex Board Game"
             if (turn == 1) {
                 System.out.print("Where would you like to hit? ");
                 String hit = kb.next();
-                packet.send(new Packet(hit,player));
+                packet.send(hit);
                 turn++;
             }
             else if (turn == 2) {

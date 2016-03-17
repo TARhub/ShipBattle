@@ -19,10 +19,10 @@ public class PacketSend {
     private final int    player = -1;
 
     private ServerConnection sC;
-    private LinkedBlockingQueue<Packet> packets;
+    private LinkedBlockingQueue<String> packets;
     private Socket client;
 
-    private Packet storedPacket = null;
+    private String storedPacket = null;
 
     /**
      * Constructs a <code>PacketSend</code> object using the player #,
@@ -36,7 +36,7 @@ public class PacketSend {
         client = new Socket(LOCAL_HOST,PORT);
         client.setSoTimeout(100000);
 
-        packets = new LinkedBlockingQueue<Packet>();
+        packets = new LinkedBlockingQueue<String>();
         sC = new ServerConnection(client);
 
         switch (player) {
@@ -48,9 +48,9 @@ public class PacketSend {
             public void run() {
                 while (true) {
                     try {
-                        System.out.println("Yeet! PacketHandling.");
+                        System.out.println("Yeet! Packet Handling.");
                         storedPacket = packets.take();
-                        System.out.println(storedPacket.packet()+"\nYours truly, PacketHandling(client).");
+                        System.out.println(storedPacket+"\nYours truly, PacketHandling(client).");
                         System.out.println("Yaw! PacketHandling.");
                     } catch (InterruptedException e) {
                         e.printStackTrace();
@@ -64,7 +64,7 @@ public class PacketSend {
     }
 
     public String getHead() {
-        return storedPacket.packet();
+        return storedPacket;
     }
 
     private class ServerConnection extends PacketRunnable {
@@ -78,15 +78,15 @@ public class PacketSend {
                     while (true) {
                         try {
                             System.out.println("Yeet! Reading.");
+                            System.out.println(in.ready());
                             System.out.println("1");
-                            Packet packet = (Packet) in.readObject();
+                            String packet = in.readLine();
                             System.out.println("2");
-                            System.out.println(packet.packet());
+                            System.out.println(packet);
                             System.out.println("3");
                             packets.put(packet);
                             System.out.println("Yaw! Reading.");
-                        } catch (IOException | InterruptedException
-                                | ClassNotFoundException e) {
+                        } catch (IOException | InterruptedException e) {
                             e.printStackTrace();
                         }
                     }
@@ -99,7 +99,7 @@ public class PacketSend {
 
     }
 
-    public void send(Packet packet) {
+    public void send(String packet) {
         sC.write(packet);
     }
 }
