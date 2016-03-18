@@ -5,8 +5,8 @@ import java.util.*;
 public class PacketRunnable {
     private Socket client;
 
-    protected BufferedReader in         = null;
-    protected PrintWriter    out        = null;
+    protected BufferedReader in  = null;
+    protected PrintWriter    out = null;
 
     public PacketRunnable(Socket socket) {
         this.client = socket;
