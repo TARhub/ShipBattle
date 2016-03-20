@@ -10,7 +10,7 @@ import javax.swing.JFrame;
  * @version %I%
  * @since 0.0
  */
-public class Battleship { // AKA "Overly Complex Board Game"
+public class ShipBattle { // AKA "Overly Complex Board Game"
     public static void main(String[] args) throws IOException {
         Scanner kb = new Scanner(System.in);
         int player = -1, port = -420;
