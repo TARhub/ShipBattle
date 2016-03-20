@@ -15,15 +15,15 @@ public class ShipBattle { // AKA "Overly Complex Board Game"
     private static final int PLAYER_ONE = 1;
     private static final int PLAYER_TWO = 2;
 
-    private final String LOCAL_HOST = "localhost";
-    private final int    PORT;
-    private final int    player = -1;
+    private final  String LOCAL_HOST = "localhost";
+    private final  int    PORT;
+    private static int    player = -1;
 
     private ServerConnection sC;
     private LinkedBlockingQueue<String> packets;
     private Socket client;
 
-    private String storedPacket = null;
+    private static String storedPacket = null;
 
     public ShipBattle(int player, int port) throws IOException {
         this.PORT = port;
@@ -76,12 +76,12 @@ public class ShipBattle { // AKA "Overly Complex Board Game"
         }
 
         PacketServer server = null;
-        PacketSend   packet = null;
+        ShipBattle   packet = null;
 
         if ( player == 1 ) {
             try {
                 server = new PacketServer(port);
-                packet = new PacketSend(player,port);
+                packet = new ShipBattle(player,port);
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -89,7 +89,7 @@ public class ShipBattle { // AKA "Overly Complex Board Game"
 
         else if ( player == 2 ) {
             try {
-                packet = new PacketSend(player,port);
+                packet = new ShipBattle(player,port);
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -121,7 +121,6 @@ public class ShipBattle { // AKA "Overly Complex Board Game"
                 turn++;
             }
             else if (turn == 2) {
-                Future<String> future = exec.submit(packet.getHead());
                 Callable<String> task = new Callable<String>() {
                     @Override
                     public String call() throws Exception {
@@ -129,6 +128,8 @@ public class ShipBattle { // AKA "Overly Complex Board Game"
                         return storedPacket;
                     }
                 };
+
+                Future<String> future = exec.submit(task);
 
                 String toHit = null;
 
