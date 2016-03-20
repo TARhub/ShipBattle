@@ -11,9 +11,11 @@ import javax.swing.JFrame;
  * @since 0.0
  */
 public class ShipBattle { // AKA "Overly Complex Board Game"
+    private static int player = -1;
+
     public static void main(String[] args) throws IOException {
         Scanner kb = new Scanner(System.in);
-        int player = -1, port = -420;
+        int port = -420;
 
         String mode = args[0];
 
@@ -93,5 +95,16 @@ public class ShipBattle { // AKA "Overly Complex Board Game"
         }
 
         //exec.shutdownNow();
+    }
+
+    public static int oppPlayer() {
+        int nEw = -1;
+        switch(player) {
+            case 1:  nEw = 2;  break;
+            case 2:  nEw = 1;  break;
+            default: nEw = 0;  break;
+        }
+
+        return nEw;
     }
 }
