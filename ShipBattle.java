@@ -1,5 +1,5 @@
-import java.net.ConnectException;
-import java.io.IOException;
+import java.io.*;
+import java.net.*;
 import java.util.*;
 import java.util.concurrent.*;
 import javax.swing.JFrame;
@@ -11,7 +11,48 @@ import javax.swing.JFrame;
  * @since 0.0
  */
 public class ShipBattle { // AKA "Overly Complex Board Game"
-    private static int player = -1;
+    // CONSTANTS \\
+    private static final int PLAYER_ONE = 1;
+    private static final int PLAYER_TWO = 2;
+
+    private final String LOCAL_HOST = "localhost";
+    private final int    PORT;
+    private final int    player = -1;
+
+    private ServerConnection sC;
+    private LinkedBlockingQueue<String> packets;
+    private Socket client;
+
+    private String storedPacket = null;
+
+    public ShipBattle(int player, int port) throws IOException {
+        this.PORT = port;
+        client = new Socket(LOCAL_HOST,PORT);
+        client.setSoTimeout(100000);
+
+        packets = new LinkedBlockingQueue<String>();
+        sC      = new ServerConnection(client);
+
+        switch (player) {
+            case PLAYER_ONE: player = 1; break;
+            case PLAYER_TWO: player = 2; break;
+        }
+
+        Thread packetHandling = new Thread() {
+            public void run() {
+                while (true) {
+                    try {
+                        storedPacket = packets.take();
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+        };
+
+        packetHandling.setDaemon(true);
+        packetHandling.start();
+    }
 
     public static void main(String[] args) throws IOException {
         Scanner kb = new Scanner(System.in);
@@ -81,6 +122,14 @@ public class ShipBattle { // AKA "Overly Complex Board Game"
             }
             else if (turn == 2) {
                 Future<String> future = exec.submit(packet.getHead());
+                Callable<String> task = new Callable<String>() {
+                    @Override
+                    public String call() throws Exception {
+                        while(storedPacket == null) {System.out.println("It's null!");}
+                        return storedPacket;
+                    }
+                };
+
                 String toHit = null;
 
                 try {
@@ -106,5 +155,35 @@ public class ShipBattle { // AKA "Overly Complex Board Game"
         }
 
         return nEw;
+    }
+
+    private class ServerConnection extends PacketRunnable {
+
+        ServerConnection(Socket server) throws IOException {
+            super(server);
+
+            Thread read = new Thread() {
+                @Override
+                public void run() {
+                    while (true) {
+                        try {
+                            System.out.println(in.ready());
+                            String packet = in.readLine();
+                            System.out.println(packet);
+                            packets.put(packet);
+                        } catch (IOException | InterruptedException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                }
+            };
+
+            read.setDaemon(true);
+            read.start();
+        }
+    }
+
+    public void send(String packet) {
+        sC.write(packet);
     }
 }
