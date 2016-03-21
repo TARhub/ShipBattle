@@ -157,13 +157,17 @@ public class ShipBattle { // AKA "Overly Complex Board Game"
                 System.out.print("Where would you like to hit? ");
                 String hit = kb.next();
                 packet.send(hit);
+
+                turn++;
             }
             else if (turn == 2) {
                 Callable<String> task = new Callable<String>() {
                     @Override
                     public String call() throws Exception {
                         while(storedPacket == null) {System.out.println("\rIt's null!\r");}
-                        return storedPacket;
+                        String temp = storedPacket;
+                        storedPacket = null;
+                        return temp;
                     }
                 };
 
@@ -178,6 +182,8 @@ public class ShipBattle { // AKA "Overly Complex Board Game"
                 }
 
                 tB.hit(tB.thisCoord(toHit));
+
+                turn--;
             }
         }
 
