@@ -59,13 +59,17 @@ public class PacketServer {
                 turn = 2;
                 while (true) {
                     try {
+                        for (String s : packets)
+                            System.out.print("lol"+s);
+
+                        broadcast(Integer.toString(turn));
+
                         String packet = packets.take();
 
                         send(turn-1,packet);
+
                         if (turn == 1) {turn++;}
                         else if (turn == 2) {turn--;}
-
-                        broadcast(Integer.toString(turn));
 
                     } catch (InterruptedException e) {
                         e.printStackTrace();
@@ -92,7 +96,6 @@ public class PacketServer {
                 public void run() {
                     while (true) {
                         try {
-                            System.out.println(in.ready());
                             String packet = in.readLine();
                             System.out.println(packet);
                             packets.put(packet);
@@ -117,6 +120,7 @@ public class PacketServer {
     }
 
     public void broadcast(String packet) {
+        System.out.println(packet);
         for (PacketRunnable c : runnables)
             c.write(packet);
     }

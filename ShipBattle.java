@@ -66,7 +66,6 @@ public class ShipBattle { // AKA "Overly Complex Board Game"
                 public void run() {
                     while (true) {
                         try {
-                            System.out.println(in.ready());
                             String packet = in.readLine();
 
                             if (isInteger(packet)) {
@@ -78,7 +77,6 @@ public class ShipBattle { // AKA "Overly Complex Board Game"
                                         turn = oppPlayer(Integer.parseInt(packet));
                                         break;
                                 }
-
                             }
                             else { packets.put(packet); }
 
@@ -154,18 +152,17 @@ public class ShipBattle { // AKA "Overly Complex Board Game"
         ExecutorService exec = Executors.newFixedThreadPool(1);
 
         while (true) {
-
+            System.out.println(turn);
             if (turn == 1) {
                 System.out.print("Where would you like to hit? ");
                 String hit = kb.next();
                 packet.send(hit);
-                turn++;
             }
             else if (turn == 2) {
                 Callable<String> task = new Callable<String>() {
                     @Override
                     public String call() throws Exception {
-                        while(storedPacket == null) {System.out.println("It's null!");}
+                        while(storedPacket == null) {System.out.println("\rIt's null!\r");}
                         return storedPacket;
                     }
                 };
@@ -181,7 +178,6 @@ public class ShipBattle { // AKA "Overly Complex Board Game"
                 }
 
                 tB.hit(tB.thisCoord(toHit));
-                turn--;
             }
         }
 
@@ -199,14 +195,14 @@ public class ShipBattle { // AKA "Overly Complex Board Game"
     }
 
     public static boolean isInteger(String s) {
-    try {
-        Integer.parseInt(s);
-    } catch(NumberFormatException e) {
-        return false;
-    } catch(NullPointerException e) {
-        return false;
-    }
-    // You're the best Mr. Mitchell! (Apparently this method is a really bad practice...)
+        try {
+            Integer.parseInt(s);
+        } catch(NumberFormatException e) {
+            return false;
+        } catch(NullPointerException e) {
+            return false;
+        }
+        // You're the best Mr. Mitchell! (Apparently this method is a really bad practice...)
     return true;
 }
 
