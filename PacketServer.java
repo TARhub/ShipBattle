@@ -14,6 +14,7 @@ public class PacketServer {
     private LinkedBlockingQueue<String> packets;
     private ServerSocket serverSocket;
     private final int PORT;
+    private int turn = 0;
 
     /**
      * Constructs a <code>PacketServer</code> object using a port.
@@ -37,6 +38,7 @@ public class PacketServer {
         }
 
         Thread accept = new Thread() {
+            @Override
             public void run() {
                 for (int i=0;i<2;i++) {
                     try {
@@ -52,15 +54,18 @@ public class PacketServer {
         accept.start();
 
         Thread packetHandling = new Thread() {
+            @Override
             public void run() {
-                int i=1;
+                turn = 2;
                 while (true) {
                     try {
                         String packet = packets.take();
 
-                        send(i,packet);
-                        if (i == 0) {i++;}
-                        else if (i == 1) {i--;}
+                        send(turn-1,packet);
+                        if (turn == 1) {turn++;}
+                        else if (turn == 2) {turn--;}
+
+                        broadcast(Integer.toString(turn));
 
                     } catch (InterruptedException e) {
                         e.printStackTrace();
@@ -71,6 +76,10 @@ public class PacketServer {
 
         packetHandling.setDaemon(true);
         packetHandling.start();
+    }
+
+    public int getTurn() {
+        return turn;
     }
 
     private class ClientConnection extends PacketRunnable {
@@ -105,5 +114,10 @@ public class PacketServer {
 
     public void send(int player, String packet) {
         runnables.get(player).write(packet);
+    }
+
+    public void broadcast(String packet) {
+        for (PacketRunnable c : runnables)
+            c.write(packet);
     }
 }

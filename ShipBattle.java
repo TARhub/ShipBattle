@@ -18,6 +18,7 @@ public class ShipBattle { // AKA "Overly Complex Board Game"
     private final  String LOCAL_HOST = "localhost";
     private final  int    PORT;
     private static int    player = -1;
+    private static int    turn = 0;
 
     private ServerConnection sC;
     private LinkedBlockingQueue<String> packets;
@@ -30,8 +31,8 @@ public class ShipBattle { // AKA "Overly Complex Board Game"
         client = new Socket(LOCAL_HOST,PORT);
         client.setSoTimeout(100000);
 
-        packets = new LinkedBlockingQueue<String>();
-        sC      = new ServerConnection(client);
+        packets     = new LinkedBlockingQueue<String>();
+        sC          = new ServerConnection(client);
 
         switch (player) {
             case PLAYER_ONE: player = 1; break;
@@ -39,6 +40,7 @@ public class ShipBattle { // AKA "Overly Complex Board Game"
         }
 
         Thread packetHandling = new Thread() {
+            @Override
             public void run() {
                 while (true) {
                     try {
@@ -52,6 +54,44 @@ public class ShipBattle { // AKA "Overly Complex Board Game"
 
         packetHandling.setDaemon(true);
         packetHandling.start();
+    }
+
+    private class ServerConnection extends PacketRunnable {
+
+        ServerConnection(Socket server) throws IOException {
+            super(server);
+
+            Thread read = new Thread() {
+                @Override
+                public void run() {
+                    while (true) {
+                        try {
+                            System.out.println(in.ready());
+                            String packet = in.readLine();
+
+                            if (isInteger(packet)) {
+                                switch(player) {
+                                    case 1:
+                                        turn = Integer.parseInt(packet);
+                                        break;
+                                    case 2:
+                                        turn = oppPlayer(Integer.parseInt(packet));
+                                        break;
+                                }
+
+                            }
+                            else { packets.put(packet); }
+
+                        } catch (IOException | InterruptedException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                }
+            };
+
+            read.setDaemon(true);
+            read.start();
+        }
     }
 
     public static void main(String[] args) throws IOException {
@@ -114,6 +154,7 @@ public class ShipBattle { // AKA "Overly Complex Board Game"
         ExecutorService exec = Executors.newFixedThreadPool(1);
 
         while (true) {
+
             if (turn == 1) {
                 System.out.print("Where would you like to hit? ");
                 String hit = kb.next();
@@ -147,42 +188,27 @@ public class ShipBattle { // AKA "Overly Complex Board Game"
         //exec.shutdownNow();
     }
 
-    public static int oppPlayer() {
-        int nEw = -1;
+    public static int oppPlayer(int i) {
         switch(player) {
-            case 1:  nEw = 2;  break;
-            case 2:  nEw = 1;  break;
-            default: nEw = 0;  break;
+            case 1:  i = 2;  break;
+            case 2:  i = 1;  break;
+            default: i = 0;  break;
         }
 
-        return nEw;
+        return i;
     }
 
-    private class ServerConnection extends PacketRunnable {
-
-        ServerConnection(Socket server) throws IOException {
-            super(server);
-
-            Thread read = new Thread() {
-                @Override
-                public void run() {
-                    while (true) {
-                        try {
-                            System.out.println(in.ready());
-                            String packet = in.readLine();
-                            System.out.println(packet);
-                            packets.put(packet);
-                        } catch (IOException | InterruptedException e) {
-                            e.printStackTrace();
-                        }
-                    }
-                }
-            };
-
-            read.setDaemon(true);
-            read.start();
-        }
+    public static boolean isInteger(String s) {
+    try {
+        Integer.parseInt(s);
+    } catch(NumberFormatException e) {
+        return false;
+    } catch(NullPointerException e) {
+        return false;
     }
+    // You're the best Mr. Mitchell! (Apparently this method is a really bad practice...)
+    return true;
+}
 
     public void send(String packet) {
         sC.write(packet);
